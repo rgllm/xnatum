@@ -24,12 +24,31 @@ class Xnat:
             projects.append( (project.id, project.name) )
         return projects
     
-    def get_sessions(self, lproject, lsubject):
+    def get_subject_sessions(self, lproject, lsubject):
         project = self.session.projects[lproject]
         subject = project.subjects[lsubject]
+        try:
+            os.mkdir(lproject)
+        except OSError:
+            print ("Creation of the directory %s failed" % lproject)
+            return
+        project_path = './' + lproject
+        subject.download_dir(project_path)
         session = [x.label for x in subject.experiments.values()]
         return session
-        
+    
+    def get_project_sessions(self, lproject):
+        project = self.session.projects[lproject]
+        try:
+            os.mkdir(lproject)
+        except OSError:
+            print ("Creation of the directory %s failed" % lproject)
+            return
+        project_path = './' + lproject
+        for subject in project.subjects.values():
+            subject.download_dir(project_path)
+        return project_path
+
     # Function to import resources
     def import_resource( self, obj, subdir, files ):
         for file in files:

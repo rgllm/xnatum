@@ -9,7 +9,6 @@ from xnatum import Xnat, util
 def main():
     parser = argparse.ArgumentParser(description='Download session')
     parser.add_argument('-project', required=True, help='Project ID')
-    parser.add_argument('-subject', required=True, help='Subject ID')
     parser.add_argument('-server', help='Server for XNAT connection', required=True)
     parser.add_argument('-username', help='Username for XNAT connection', required=True)
     parser.add_argument('-password', help='Password for XNAT connection', required=True)
@@ -17,7 +16,7 @@ def main():
 
     # Creating connection and load experiment object
     xnat = Xnat(args.server, args.username, args.password)
-    xnat_sessions = xnat.get_sessions(args.project, args.subject)
+    xnat_sessions = xnat.get_project_sessions(args.project)
     print(xnat_sessions)
 
 # init
