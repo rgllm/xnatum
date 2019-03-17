@@ -23,7 +23,13 @@ class Xnat:
         for project in self.session.projects.values():
             projects.append( (project.id, project.name) )
         return projects
-
+    
+    def get_sessions(self, lproject, lsubject):
+        project = self.session.projects[lproject]
+        subject = project.subjects[lsubject]
+        session = [x.label for x in subject.experiments.values()]
+        return session
+        
     # Function to import resources
     def import_resource( self, obj, subdir, files ):
         for file in files:
@@ -63,3 +69,4 @@ class Xnat:
         self.__prearc_session = None
 
         print('Finished!')
+    
