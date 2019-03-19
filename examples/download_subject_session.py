@@ -17,7 +17,7 @@ def main():
 
     # Creating connection and load experiment object
     xnat = Xnat(args.server, args.username, args.password)
-    xnat_sessions = xnat.get_subject_sessions(args.project, args.subject)
+    xnat_sessions = xnat.download_subject_sessions(args.project, args.subject)
     print(xnat_sessions)
 
 # init

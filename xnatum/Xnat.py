@@ -24,30 +24,43 @@ class Xnat:
             projects.append( (project.id, project.name) )
         return projects
     
+    def download_subject_sessions(self, lproject, lsubject):
+        project = self.session.projects[lproject]
+        subject = project.subjects[lsubject]
+        download_dir = os.path.expanduser(lproject)
+        print('Using {} as download directory'.format(download_dir))
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+        for experiment in subject.experiments.values():
+            print("Downloading ", experiment)
+            experiment.download_dir(download_dir)
+        session = [x.label for x in subject.experiments.values()]
+        return session
+
     def get_subject_sessions(self, lproject, lsubject):
         project = self.session.projects[lproject]
         subject = project.subjects[lsubject]
-        try:
-            os.mkdir(lproject)
-        except OSError:
-            print ("Creation of the directory %s failed" % lproject)
-            return
-        project_path = './' + lproject
-        subject.download_dir(project_path)
-        session = [x.label for x in subject.experiments.values()]
-        return session
+        return subject.experiments.values()
+    
+    def download_project_sessions(self, lproject):
+        project = self.session.projects[lproject]
+        download_dir = os.path.expanduser(lproject)
+        print('Using {} as download directory'.format(download_dir))
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                print("Downloading ", experiment)
+                experiment.download_dir(download_dir)
+        return download_dir
     
     def get_project_sessions(self, lproject):
         project = self.session.projects[lproject]
-        try:
-            os.mkdir(lproject)
-        except OSError:
-            print ("Creation of the directory %s failed" % lproject)
-            return
-        project_path = './' + lproject
+        allexperiments = []
         for subject in project.subjects.values():
-            subject.download_dir(project_path)
-        return project_path
+            for experiment in subject.experiments.values():
+                allexperiments.append(experiment)
+        return allexperiments
 
     # Function to import resources
     def import_resource( self, obj, subdir, files ):
