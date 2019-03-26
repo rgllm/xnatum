@@ -24,10 +24,11 @@ class Xnat:
             projects.append( (project.id, project.name) )
         return projects
     
+    # download train and test data
     def download_dp_data(self, lproject):
         project = self.session.projects[lproject]
         train_dir = os.path.expanduser(lproject + '/TRAIN')
-        test_dir = os.path.expanduser(lproject§ + '/TEST')
+        test_dir = os.path.expanduser(lproject + '/TEST')
 
         if not os.path.exists(train_dir):
             os.makedirs(train_dir)
@@ -37,10 +38,29 @@ class Xnat:
             for experiment in subject.experiments.values():
                 print("Downloading ", experiment)
                 # Validate this experiment.label
-                if(experiment.label.contains('TRAIN')):
+                if(experiment.label.find('TRAIN') != -1):
                     experiment.download_dir(train_dir)
                 else:
                     experiment.download_dir(test_dir)
+        return[train_dir, test_dir]
+
+    def get_train_data(self, lproject):
+        project = self.session.projects[lproject]
+        trainData = []
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                if(experiment.label.find('TRAIN') != -1):
+                    trainData.append(experiment)
+        return trainData
+
+    def get_test_data(self, lproject):
+        project = self.session.projects[lproject]
+        testData = []
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                if(experiment.label.find('TEST') != -1):
+                    testData.append(experiment)
+        return testData
         
     # Download subject sessions to a local folder
     def download_subject_sessions(self, lproject, lsubject):
