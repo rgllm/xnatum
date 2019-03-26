@@ -24,6 +24,25 @@ class Xnat:
             projects.append( (project.id, project.name) )
         return projects
     
+    def download_dp_data(self, lproject):
+        project = self.session.projects[lproject]
+        train_dir = os.path.expanduser(lproject + '/TRAIN')
+        test_dir = os.path.expanduser(lproject§ + '/TEST')
+
+        if not os.path.exists(train_dir):
+            os.makedirs(train_dir)
+        if not os.path.exists(test_dir):
+            os.makedirs(test_dir)
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                print("Downloading ", experiment)
+                # Validate this experiment.label
+                if(experiment.label.contains('TRAIN')):
+                    experiment.download_dir(train_dir)
+                else:
+                    experiment.download_dir(test_dir)
+        
+    # Download subject sessions to a local folder
     def download_subject_sessions(self, lproject, lsubject):
         project = self.session.projects[lproject]
         subject = project.subjects[lsubject]
@@ -37,11 +56,13 @@ class Xnat:
         session = [x.label for x in subject.experiments.values()]
         return session
 
+    # Returns a subject sessions without the need to downlaod them locally
     def get_subject_sessions(self, lproject, lsubject):
         project = self.session.projects[lproject]
         subject = project.subjects[lsubject]
         return subject.experiments.values()
-    
+
+    # Download all sessions from a project    
     def download_project_sessions(self, lproject):
         project = self.session.projects[lproject]
         download_dir = os.path.expanduser(lproject)
@@ -54,6 +75,7 @@ class Xnat:
                 experiment.download_dir(download_dir)
         return download_dir
     
+    # Returns all the sessions from a project without the need to downlaod them locally
     def get_project_sessions(self, lproject):
         project = self.session.projects[lproject]
         allexperiments = []
