@@ -7,7 +7,7 @@ setup(
     author='Rogerio Moreira',
     author_email='r@rgllm.com',
     packages=find_packages(),
-    install_requires=['xnat'],
+    install_requires=['xnat', 'dicom2nifti'],
     version='0.3.1',
     license='MIT',
     description='A package for connecting and manage data on XNAT.',

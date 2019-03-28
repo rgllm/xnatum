@@ -2,6 +2,7 @@
 import xnat as xnatpy
 import os, sys
 from .util import tmp_zip
+import dicom2nifti
 
 # Main interface with XNAT
 # methods created to simplify XNAT access
@@ -103,6 +104,10 @@ class Xnat:
             for experiment in subject.experiments.values():
                 allexperiments.append(experiment)
         return allexperiments
+    
+    # Converts Dicom to Nifti files
+    def convert_dicom_nifti(self, dicom_directory, output_folder):
+        dicom2nifti.convert_directory(dicom_directory, output_folder, compression=True, reorient=True)
 
     # Function to import resources
     def import_resource( self, obj, subdir, files ):
