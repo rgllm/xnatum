@@ -2,6 +2,7 @@
 import xnat as xnatpy
 import os, sys
 from .util import tmp_zip
+import dicom2nifti
 
 # Main interface with XNAT
 # methods created to simplify XNAT access
@@ -23,6 +24,90 @@ class Xnat:
         for project in self.session.projects.values():
             projects.append( (project.id, project.name) )
         return projects
+    
+    # download train and test data
+    def download_dp_data(self, lproject):
+        project = self.session.projects[lproject]
+        train_dir = os.path.expanduser(lproject + '/TRAIN')
+        test_dir = os.path.expanduser(lproject + '/TEST')
+
+        if not os.path.exists(train_dir):
+            os.makedirs(train_dir)
+        if not os.path.exists(test_dir):
+            os.makedirs(test_dir)
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                print("Downloading ", experiment)
+                # Validate this experiment.label
+                if(experiment.label.find('TRAIN') != -1):
+                    experiment.download_dir(train_dir)
+                else:
+                    experiment.download_dir(test_dir)
+        return[train_dir, test_dir]
+
+    def get_train_data(self, lproject):
+        project = self.session.projects[lproject]
+        trainData = []
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                if(experiment.label.find('TRAIN') != -1):
+                    trainData.append(experiment)
+        return trainData
+
+    def get_test_data(self, lproject):
+        project = self.session.projects[lproject]
+        testData = []
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                if(experiment.label.find('TEST') != -1):
+                    testData.append(experiment)
+        return testData
+        
+    # Download subject sessions to a local folder
+    def download_subject_sessions(self, lproject, lsubject):
+        project = self.session.projects[lproject]
+        subject = project.subjects[lsubject]
+        download_dir = os.path.expanduser(lproject)
+        print('Using {} as download directory'.format(download_dir))
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+        for experiment in subject.experiments.values():
+            print("Downloading ", experiment)
+            experiment.download_dir(download_dir)
+        session = [x.label for x in subject.experiments.values()]
+        return session
+
+    # Returns a subject sessions without the need to downlaod them locally
+    def get_subject_sessions(self, lproject, lsubject):
+        project = self.session.projects[lproject]
+        subject = project.subjects[lsubject]
+        return subject.experiments.values()
+
+    # Download all sessions from a project    
+    def download_project_sessions(self, lproject):
+        project = self.session.projects[lproject]
+        download_dir = os.path.expanduser(lproject)
+        print('Using {} as download directory'.format(download_dir))
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                print("Downloading ", experiment)
+                experiment.download_dir(download_dir)
+        return download_dir
+    
+    # Returns all the sessions from a project without the need to downlaod them locally
+    def get_project_sessions(self, lproject):
+        project = self.session.projects[lproject]
+        allexperiments = []
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                allexperiments.append(experiment)
+        return allexperiments
+    
+    # Converts Dicom to Nifti files
+    def convert_dicom_nifti(self, dicom_directory, output_folder):
+        dicom2nifti.convert_directory(dicom_directory, output_folder, compression=True, reorient=True)
 
     # Function to import resources
     def import_resource( self, obj, subdir, files ):
@@ -63,3 +148,4 @@ class Xnat:
         self.__prearc_session = None
 
         print('Finished!')
+    
