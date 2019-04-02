@@ -3,6 +3,7 @@ import xnat as xnatpy
 import os, sys
 from .util import tmp_zip
 import dicom2nifti
+import shutil
 
 # Main interface with XNAT
 # methods created to simplify XNAT access
@@ -87,6 +88,7 @@ class Xnat:
     def download_project_sessions(self, lproject):
         project = self.session.projects[lproject]
         download_dir = os.path.expanduser(lproject)
+        source = os.listdir(download_dir)
         print('Using {} as download directory'.format(download_dir))
         if not os.path.exists(download_dir):
             os.makedirs(download_dir)
@@ -94,6 +96,8 @@ class Xnat:
             for experiment in subject.experiments.values():
                 print("Downloading ", experiment)
                 experiment.download_dir(download_dir)
+        for files in source:
+            shutil.move(os.path.join(download_dir,files), os.path.join(download_dir,files))
         return download_dir
     
     # Returns all the sessions from a project without the need to downlaod them locally
