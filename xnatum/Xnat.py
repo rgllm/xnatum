@@ -89,6 +89,10 @@ class Xnat:
         subject = project.subjects[lsubject]
         return subject.experiments.values()
 
+    def get_list_subjects(self, lproject):
+        project = self.session.projects[lproject]
+        return project.subjects
+
     # Download all sessions from a project
     def download_project_sessions(self, lproject):
         project = self.session.projects[lproject]
