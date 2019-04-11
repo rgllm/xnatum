@@ -105,6 +105,19 @@ class Xnat:
                 print("Downloading ", experiment)
                 experiment.download_dir(download_dir)
         return download_dir
+    
+     # Download all sessions from a project
+    def download_project_sessions_to_folder(self, lproject, ldirectory):
+        project = self.session.projects[lproject]
+        download_dir = os.path.expanduser(ldirectory)
+        print('Using {} as download directory'.format(download_dir))
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+        for subject in project.subjects.values():
+            for experiment in subject.experiments.values():
+                print("Downloading ", experiment)
+                experiment.download_dir(download_dir)
+        return download_dir
 
     # Returns all the sessions from a project without the need to downlaod them locally
     def get_project_sessions(self, lproject):
