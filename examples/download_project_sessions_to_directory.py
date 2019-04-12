@@ -19,7 +19,7 @@ def main():
     # Creating connection and load experiment object
     xnat = Xnat(args.server, args.username, args.password)
     dirpath = tempfile.mkdtemp()
-    xnat_sessions = xnat.download_project_sessions_to_folder(args.project, dirpath)
+    xnat_sessions = xnat.download_project_sessions_to_directory(args.project, dirpath)
     print(xnat_sessions)
     shutil.rmtree(dirpath)
 
