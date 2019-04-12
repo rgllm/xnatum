@@ -76,7 +76,18 @@ class Xnat:
         print('Using {} as download directory'.format(download_dir))
         if not os.path.exists(download_dir):
             os.makedirs(download_dir)
-        source = os.path.join('.', download_dir)
+        for experiment in subject.experiments.values():
+            print("Downloading ", experiment)
+            experiment.download_dir(download_dir)
+        session = [x.label for x in subject.experiments.values()]
+        return session
+    
+    # Download subject sessions to a local folder
+    def download_subject_sessions_to_directory(self, lproject, lsubject, ldirectory):
+        project = self.session.projects[lproject]
+        subject = project.subjects[lsubject]
+        download_dir = os.path.expanduser(ldirectory)
+        print('Using {} as download directory'.format(download_dir))
         for experiment in subject.experiments.values():
             print("Downloading ", experiment)
             experiment.download_dir(download_dir)
@@ -106,13 +117,11 @@ class Xnat:
                 experiment.download_dir(download_dir)
         return download_dir
     
-     # Download all sessions from a project
-    def download_project_sessions_to_folder(self, lproject, ldirectory):
+     # Download all sessions from a project to a specific directory
+    def download_project_sessions_to_directory(self, lproject, ldirectory):
         project = self.session.projects[lproject]
         download_dir = os.path.expanduser(ldirectory)
         print('Using {} as download directory'.format(download_dir))
-        if not os.path.exists(download_dir):
-            os.makedirs(download_dir)
         for subject in project.subjects.values():
             for experiment in subject.experiments.values():
                 print("Downloading ", experiment)
