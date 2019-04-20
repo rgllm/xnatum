@@ -8,7 +8,7 @@ setup(
     author_email='r@rgllm.com',
     packages=find_packages(),
     install_requires=['xnat', 'dicom2nifti'],
-    version='1.0.5',
+    version='1.0.6',
     license='MIT',
     description='A package for connecting and manage data on XNAT.',
 )

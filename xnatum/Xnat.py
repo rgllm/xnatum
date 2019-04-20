@@ -6,10 +6,6 @@ from .util import tmp_zip
 import dicom2nifti
 import shutil
 
-# Main interface with XNAT
-# methods created to simplify XNAT access
-
-
 class Xnat:
     def __init__(self, server, user, password):
         self.server = server
@@ -22,6 +18,15 @@ class Xnat:
     def __connect(self):
         self.session = xnatpy.connect(
             self.server, user=self.user, password=self.password)
+
+    # Returns all info of a subject in a project
+    def get_subject_info(self, lproject, lsubject):
+        project = self.session.projects[lproject]
+        try:
+            subject = project.subjects[lsubject]
+            return vars(subject)
+        except:
+            return 'Subject not found.'
 
     # Listing all projects
     def list_projects(self):
