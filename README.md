@@ -1,7 +1,7 @@
 
 # XNATUM
 
-XNATUM is a Python client that exposes in a simple way XNAT objects/functions. The aim is to make a simple Python package to everyone to use on top of Xnatpy. This reduces the need for the user to know the details of the REST API.
+XNATUM is a Python client that exposes in a simple way XNAT objects and functions. The aim is to make a simple Python package to everyone to use on top of Xnatpy. This reduces the need for the user to know the details of the REST API.
 
 ## Getting started
 
@@ -13,9 +13,19 @@ or install directly via pip:
 
 ```pip install xnatum```
 
-## Dependencies
+## Useful development commands
 
-* [xnatpy](https://bitbucket.org/bigr_erasmusmc/xnatpy) >0.3.14
+To compile it locally:
+
+```python setup.py sdist bdist_wheel```
+
+To install a local version:
+
+```pip install ./dist/<archive> --upgrade```
+
+To upload it to Pypi:
+
+```python -m twine upload dist/*```
 
 ## Examples
 
@@ -23,8 +33,12 @@ You can find some code examples on how to use this package on the **examples** f
 
 ## Documentation
 
-The official documentation will be soon avaiable at xnatum.readthedocs.org.
+The official documentation is avaiable at xnatum.readthedocs.org.
+
+## Workflow to contribute
+
+To contribute to xnatum, first create an Github account. Once this is done, fork the xnatum repository to have you own repository, clone it using 'git clone'. Make your changes in your clone, push them to your forked repo, test them and when you are happy with them, send a pull request to the main repository.
 
 ## Status
 
-This package is currently been developed part of my thesis.
+This package is currently been developed part of my MSc. thesis.
