@@ -1,6 +1,15 @@
 
 # XNATUM
 
+.. image:: https://img.shields.io/travis/rgllm/xnatum.svg
+    :target: https://travis-ci.org/rgllm/xnatum
+.. image:: https://img.shields.io/pypi/dm/xnatum.svg
+    :target: https://pypi.org/project/xnatum/
+.. image:: https://img.shields.io/pypi/pyversions/xnatum.svg
+    :target: https://pypi.org/project/xnatum
+.. image:: https://img.shields.io/pypi/v/xnatum.svg
+    :target: https://pypi.org/project/xnatum
+
 XNATUM is a Python client that exposes in a simple way XNAT objects and functions. The aim is to make a simple Python package to everyone to use on top of Xnatpy. This reduces the need for the user to know the details of the REST API.
 
 ## Getting started
