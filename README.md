@@ -37,7 +37,7 @@ The official documentation is avaiable at xnatum.readthedocs.org.
 
 ## Workflow to contribute
 
-To contribute to xnatum, first create an Github account. Once this is done, fork the xnatum repository to have you own repository, clone it using 'git clone'. Make your changes in your clone, push them to your forked repo, test them and when you are happy with them, send a pull request to the main repository.
+To contribute to XNATUM, first create an Github account. Once this is done, fork the XNATUM repository to have you own repository, clone it using 'git clone'. Make your changes in your clone, push them to your forked repo, test them and when you are happy with them, send a pull request to the main repository.
 
 ## Status
 
