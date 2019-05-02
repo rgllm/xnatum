@@ -1,12 +1,14 @@
 Welcome to xnatum's documentation!
 ==================================
 
-.. automodule:: xnatum.Xnat
-    :members:
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+.. automodule:: source.Xnat
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Indices and tables
 ==================
