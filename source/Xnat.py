@@ -35,7 +35,6 @@ class Xnat:
         -------
         object
             All the info from a subject, including the custom variables.
-
         """
         project = self.session.projects[lproject]
         try:
