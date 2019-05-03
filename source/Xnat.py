@@ -45,7 +45,6 @@ class Xnat:
         except:
             return "The subject was not found in the project."
 
-    # Listing all projects
     def list_projects(self):
         """
         List all the projects on a Xnat instance
@@ -56,7 +55,6 @@ class Xnat:
         -------
         array(str)
             All the projects
-
         """
         projects = []
         for project in self.session.projects.values():
@@ -80,7 +78,6 @@ class Xnat:
         -------
         [str, str]
             Downloads data and returns an array with the train folder path and the test folder path.
-
         """
         project = self.session.projects[lproject]
         train_dir = os.path.expanduser(lproject + "/TRAIN")
@@ -114,7 +111,6 @@ class Xnat:
         -------
         object
             All train data.
-
         """
         project = self.session.projects[lproject]
         trainData = []
@@ -139,7 +135,6 @@ class Xnat:
         -------
         object
             All test data.
-
         """
         project = self.session.projects[lproject]
         testData = []
@@ -166,7 +161,6 @@ class Xnat:
         -------
         [str]
             Returns the downloaded session names
-
         """
         project = self.session.projects[lproject]
         subject = project.subjects[lsubject]
@@ -199,7 +193,6 @@ class Xnat:
         -------
         [str]
             Returns the downloaded session names
-
         """
         project = self.session.projects[lproject]
         subject = project.subjects[lsubject]
