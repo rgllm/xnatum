@@ -1,4 +1,4 @@
 from .Xnat import Xnat
 
-name = 'xnat'
+name = "xnat"
 __all__ = ["Xnat"]

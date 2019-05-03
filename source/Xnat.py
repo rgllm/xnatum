@@ -5,6 +5,7 @@ from .util import tmp_zip
 import dicom2nifti
 import shutil
 
+
 class Xnat:
     def __init__(self, server, user, password):
         self.server = server
@@ -16,7 +17,8 @@ class Xnat:
     def __connect(self):
         """Connects to the Xnat instance and saves the connection."""
         self.session = xnatpy.connect(
-            self.server, user=self.user, password=self.password)
+            self.server, user=self.user, password=self.password
+        )
 
     def get_subject_info(self, lproject, lsubject):
         """
@@ -41,7 +43,7 @@ class Xnat:
             subject = project.subjects[lsubject]
             return vars(subject)
         except:
-            return 'The subject was not found in the project.'
+            return "The subject was not found in the project."
 
     # Listing all projects
     def list_projects(self):
@@ -81,8 +83,8 @@ class Xnat:
 
         """
         project = self.session.projects[lproject]
-        train_dir = os.path.expanduser(lproject + '/TRAIN')
-        test_dir = os.path.expanduser(lproject + '/TEST')
+        train_dir = os.path.expanduser(lproject + "/TRAIN")
+        test_dir = os.path.expanduser(lproject + "/TEST")
 
         if not os.path.exists(train_dir):
             os.makedirs(train_dir)
@@ -91,11 +93,11 @@ class Xnat:
         for subject in project.subjects.values():
             for experiment in subject.experiments.values():
                 print("Downloading ", experiment)
-                if(experiment.label.find('TRAIN') != -1):
+                if experiment.label.find("TRAIN") != -1:
                     experiment.download_dir(train_dir)
                 else:
                     experiment.download_dir(test_dir)
-        return[train_dir, test_dir]
+        return [train_dir, test_dir]
 
     def get_train_data(self, lproject):
         """
@@ -118,7 +120,7 @@ class Xnat:
         trainData = []
         for subject in project.subjects.values():
             for experiment in subject.experiments.values():
-                if(experiment.label.find('TRAIN') != -1):
+                if experiment.label.find("TRAIN") != -1:
                     trainData.append(experiment)
         return trainData
 
@@ -143,7 +145,7 @@ class Xnat:
         testData = []
         for subject in project.subjects.values():
             for experiment in subject.experiments.values():
-                if(experiment.label.find('TEST') != -1):
+                if experiment.label.find("TEST") != -1:
                     testData.append(experiment)
         return testData
 
@@ -169,7 +171,7 @@ class Xnat:
         project = self.session.projects[lproject]
         subject = project.subjects[lsubject]
         download_dir = os.path.expanduser(lproject)
-        print('Using {} as download directory'.format(download_dir))
+        print("Using {} as download directory".format(download_dir))
         if not os.path.exists(download_dir):
             os.makedirs(download_dir)
         for experiment in subject.experiments.values():
@@ -177,7 +179,7 @@ class Xnat:
             experiment.download_dir(download_dir)
         session = [x.label for x in subject.experiments.values()]
         return session
-    
+
     def download_subject_sessions_to_directory(self, lproject, lsubject, ldirectory):
         """
         Downloads subject sessions to a specific folder
@@ -202,7 +204,7 @@ class Xnat:
         project = self.session.projects[lproject]
         subject = project.subjects[lsubject]
         download_dir = os.path.expanduser(ldirectory)
-        print('Using {} as download directory'.format(download_dir))
+        print("Using {} as download directory".format(download_dir))
         for experiment in subject.experiments.values():
             print("Downloading ", experiment)
             experiment.download_dir(download_dir)
@@ -268,7 +270,7 @@ class Xnat:
         """
         project = self.session.projects[lproject]
         download_dir = os.path.expanduser(lproject)
-        print('Using {} as download directory'.format(download_dir))
+        print("Using {} as download directory".format(download_dir))
         if not os.path.exists(download_dir):
             os.makedirs(download_dir)
         for subject in project.subjects.values():
@@ -276,7 +278,7 @@ class Xnat:
                 print("Downloading ", experiment)
                 experiment.download_dir(download_dir)
         return download_dir
-    
+
     def download_project_sessions_to_directory(self, lproject, ldirectory):
         """
         Download all sessions from a project to a specific directory
@@ -295,7 +297,7 @@ class Xnat:
         """
         project = self.session.projects[lproject]
         download_dir = os.path.expanduser(ldirectory)
-        print('Using {} as download directory'.format(download_dir))
+        print("Using {} as download directory".format(download_dir))
         for subject in project.subjects.values():
             for experiment in subject.experiments.values():
                 print("Downloading ", experiment)
@@ -339,7 +341,8 @@ class Xnat:
             The output folder
         """
         dicom2nifti.convert_directory(
-            dicom_directory, output_folder, compression=True, reorient=True)
+            dicom_directory, output_folder, compression=True, reorient=True
+        )
 
     def import_resource(self, obj, subdir, files):
         """
@@ -347,43 +350,48 @@ class Xnat:
         """
         for file in files:
             filename = os.path.basename(file)
-            uri = '{}/resources/{}/files/{}'.format(obj.uri, subdir, filename)
-            self.session.put(uri, files={'file': open(file, 'rb')})
+            uri = "{}/resources/{}/files/{}".format(obj.uri, subdir, filename)
+            self.session.put(uri, files={"file": open(file, "rb")})
 
-    def send_sequence(self, project, subject, sequence_dir, session='', destination='/prearchive'):
+    def send_sequence(
+        self, project, subject, sequence_dir, session="", destination="/prearchive"
+    ):
         """
         Function to send a specific sequence to Xnat.
         """
         zipfname = tmp_zip(sequence_dir)
         try:
-            self.__prearc_session = self.session.services.import_(zipfname,
-                                                                  overwrite='append',
-                                                                  project=project,
-                                                                  subject=subject,
-                                                                  experiment=subject+'_'+session,
-                                                                  destination=destination,
-                                                                  trigger_pipelines=False)
+            self.__prearc_session = self.session.services.import_(
+                zipfname,
+                overwrite="append",
+                project=project,
+                subject=subject,
+                experiment=subject + "_" + session,
+                destination=destination,
+                trigger_pipelines=False,
+            )
         except:
             print("Unexpected error during XNAT import:")
             print(sys.exc_info())
         os.remove(zipfname)
 
-    def send_session(self, project, subject, session_dir, sequences=None, session=''):
+    def send_session(self, project, subject, session_dir, sequences=None, session=""):
         """
         Function to send a complete session to Xnat.
         """
         if not sequences:
             sequences = os.listdir(session_dir)
 
-        dest = '/prearchive'
+        dest = "/prearchive"
         for (n, sequence) in enumerate(sequences):
-            print("[{:02d}] Sending: {}".format(n+1, sequence))
+            print("[{:02d}] Sending: {}".format(n + 1, sequence))
             sequence_dir = os.path.join(session_dir, sequence)
-            self.send_sequence(project, subject, sequence_dir,
-                               session=session, destination=dest)
+            self.send_sequence(
+                project, subject, sequence_dir, session=session, destination=dest
+            )
             dest = self.__prearc_session.uri
 
         self.__prearc_session.archive()
         self.__prearc_session = None
 
-        print('Finished!')
+        print("Finished!")
