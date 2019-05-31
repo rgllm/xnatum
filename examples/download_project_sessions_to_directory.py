@@ -18,8 +18,10 @@ def main():
 
     # Creating connection and load experiment object
     xnat = Xnat(args.server, args.username, args.password)
-    xnat_sessions = xnat.download_project_sessions_to_directory(args.project, '~/Desktop/')
+    dirpath = tempfile.mkdtemp()
+    xnat_sessions = xnat.download_project_sessions_to_directory(args.project, dirpath)
     print(xnat_sessions)
+    shutil.rmtree(dirpath)
 
 # init
 if __name__ == '__main__':
