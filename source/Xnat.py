@@ -174,6 +174,70 @@ class Xnat:
         session = [x.label for x in subject.experiments.values()]
         return session
 
+    def download_single_session(self, lproject, lsubject, lsession):
+        """
+        Downloads a single subject session to a local folder
+
+        Extended description of function.
+
+        Parameters
+        ----------
+        lproject : str
+            Project ID
+        lsubject : str
+            Subject ID
+        lsubject : str
+            Session label
+
+        Returns
+        -------
+        [str]
+            Returns the downloaded session name
+        """
+        project = self.session.projects[lproject]
+        subject = project.subjects[lsubject]
+        download_dir = os.path.expanduser(lproject)
+        print("Using {} as download directory".format(download_dir))
+        if not os.path.exists(download_dir):
+            os.makedirs(download_dir)
+        for experiment in subject.experiments.values():
+            if(experiment.label == lsession):
+                print("Downloading ", experiment)
+                experiment.download_dir(download_dir)
+        return lsession
+    
+    def download_single_subject_session_to_directory(self, lproject, lsubject, lsession, ldirectory):
+        """
+        Downloads a single subject session to a specific folder
+
+        Extended description of function.
+
+        Parameters
+        ----------
+        lproject : str
+            Project ID
+        lsubject : str
+            Subject ID
+        lsubject : str
+            Session label
+        ldirectory: str
+            Valid system path where to download the sessions
+
+        Returns
+        -------
+        [str]
+            Returns the downloaded session name
+        """
+        project = self.session.projects[lproject]
+        subject = project.subjects[lsubject]
+        download_dir = os.path.expanduser(ldirectory)
+        print("Using {} as download directory".format(download_dir))
+        for experiment in subject.experiments.values():
+            if(experiment.label == lsession):
+                print("Downloading ", experiment)
+                experiment.download_dir(download_dir)
+        return lsession
+
     def download_subject_sessions_to_directory(self, lproject, lsubject, ldirectory):
         """
         Downloads subject sessions to a specific folder
