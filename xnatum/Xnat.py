@@ -1,6 +1,7 @@
 import xnat as xnatpy
 import os
 import sys
+import re
 from .util import tmp_zip
 import dicom2nifti
 import shutil
@@ -336,7 +337,7 @@ class Xnat:
                 experiment.download_dir(download_dir)
         return download_dir
 
-    def download_project_sessions_to_directory(self, lproject, ldirectory):
+    def download_project_sessions_to_directory(self, lproject, ldirectory, lregex = '.*'):
         """
         Download all sessions from a project to a specific directory
 
@@ -346,6 +347,9 @@ class Xnat:
         ----------
         lproject : str
             Project ID
+        
+        ldirectory : str
+            Directory where the files will be downloaded
 
         Returns
         -------
@@ -357,8 +361,9 @@ class Xnat:
         print("Using {} as download directory".format(download_dir))
         for subject in project.subjects.values():
             for experiment in subject.experiments.values():
-                print("Downloading ", experiment)
-                experiment.download_dir(download_dir)
+                if re.match(lregex, experiment.label):
+                    print("Downloading ", experiment)
+                    experiment.download_dir(download_dir)
         return download_dir
 
     def get_project_sessions(self, lproject):
