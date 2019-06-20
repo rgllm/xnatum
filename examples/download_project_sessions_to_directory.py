@@ -19,7 +19,8 @@ def main():
     # Creating connection and load experiment object
     xnat = Xnat(args.server, args.username, args.password)
     dirpath = tempfile.mkdtemp()
-    xnat_sessions = xnat.download_project_sessions_to_directory(args.project, dirpath)
+    lregex = '[A-Z]{2}[0-9]{4}[A-Z]_REST[1-2]'
+    xnat_sessions = xnat.download_project_sessions_to_directory(args.project, dirpath, lregex)
     print(xnat_sessions)
     shutil.rmtree(dirpath)
 
