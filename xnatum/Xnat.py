@@ -1,6 +1,7 @@
 import xnat as xnatpy
 import os
 import sys
+import re
 from .util import tmp_zip
 import dicom2nifti
 import shutil
@@ -144,7 +145,26 @@ class Xnat:
                     testData.append(experiment)
         return testData
 
-    def download_subject_sessions(self, lproject, lsubject):
+    def get_list_subjects(self, lproject):
+        """
+        Returns a list of subjects within a project.
+
+        Extended description of function.
+
+        Parameters
+        ----------
+        lproject : str
+            Project ID
+
+        Returns
+        -------
+        [str]
+            Returns list of subjects within a project.
+        """
+        project = self.session.projects[lproject]
+        return project.subjects
+
+    def download_subject_sessions(self, lproject, lsubject, lregex = '.*'):
         """
         Downloads subject sessions to a local folder
 
@@ -156,6 +176,8 @@ class Xnat:
             Project ID
         lsubject : str
             Subject ID
+        lregex: str
+            A regex to match specifc experiment labels
 
         Returns
         -------
@@ -169,8 +191,42 @@ class Xnat:
         if not os.path.exists(download_dir):
             os.makedirs(download_dir)
         for experiment in subject.experiments.values():
-            print("Downloading ", experiment)
-            experiment.download_dir(download_dir)
+            if re.match(lregex, experiment.label):
+                print("Downloading ", experiment)
+                experiment.download_dir(download_dir)
+        session = [x.label for x in subject.experiments.values()]
+        return session
+
+    def download_subject_sessions_to_directory(self, lproject, lsubject, ldirectory, lregex = '.*'):
+        """
+        Downloads subject sessions to a specific folder
+
+        Extended description of function.
+
+        Parameters
+        ----------
+        lproject : str
+            Project ID
+        lsubject : str
+            Subject ID
+        ldirectory: str
+            Valid system path where to download the sessions
+        lregex: str
+            A regex to match specifc experiment labels
+
+        Returns
+        -------
+        [str]
+            Returns the downloaded session names
+        """
+        project = self.session.projects[lproject]
+        subject = project.subjects[lsubject]
+        download_dir = os.path.expanduser(ldirectory)
+        print("Using {} as download directory".format(download_dir))
+        for experiment in subject.experiments.values():
+            if re.match(lregex, experiment.label):
+                print("Downloading ", experiment)
+                experiment.download_dir(download_dir)
         session = [x.label for x in subject.experiments.values()]
         return session
 
@@ -238,36 +294,6 @@ class Xnat:
                 experiment.download_dir(download_dir)
         return lsession
 
-    def download_subject_sessions_to_directory(self, lproject, lsubject, ldirectory):
-        """
-        Downloads subject sessions to a specific folder
-
-        Extended description of function.
-
-        Parameters
-        ----------
-        lproject : str
-            Project ID
-        lsubject : str
-            Subject ID
-        ldirectory: str
-            Valid system path where to download the sessions
-
-        Returns
-        -------
-        [str]
-            Returns the downloaded session names
-        """
-        project = self.session.projects[lproject]
-        subject = project.subjects[lsubject]
-        download_dir = os.path.expanduser(ldirectory)
-        print("Using {} as download directory".format(download_dir))
-        for experiment in subject.experiments.values():
-            print("Downloading ", experiment)
-            experiment.download_dir(download_dir)
-        session = [x.label for x in subject.experiments.values()]
-        return session
-
     def get_subject_sessions(self, lproject, lsubject):
         """
         Returns a subject sessions without the need to downlaod them locally
@@ -290,26 +316,7 @@ class Xnat:
         subject = project.subjects[lsubject]
         return subject.experiments.values()
 
-    def get_list_subjects(self, lproject):
-        """
-        Returns a list of subjects within a project.
-
-        Extended description of function.
-
-        Parameters
-        ----------
-        lproject : str
-            Project ID
-
-        Returns
-        -------
-        [str]
-            Returns list of subjects within a project.
-        """
-        project = self.session.projects[lproject]
-        return project.subjects
-
-    def download_project_sessions(self, lproject):
+    def download_project_sessions(self, lproject, lregex = '.*'):
         """
         Downloads all sessions from a project.
 
@@ -319,6 +326,8 @@ class Xnat:
         ----------
         lproject : str
             Project ID
+        lregex: str
+            A regex to match specifc experiment labels
 
         Returns
         -------
@@ -332,11 +341,12 @@ class Xnat:
             os.makedirs(download_dir)
         for subject in project.subjects.values():
             for experiment in subject.experiments.values():
-                print("Downloading ", experiment)
-                experiment.download_dir(download_dir)
+                if re.match(lregex, experiment.label):
+                    print("Downloading ", experiment)
+                    experiment.download_dir(download_dir)
         return download_dir
 
-    def download_project_sessions_to_directory(self, lproject, ldirectory):
+    def download_project_sessions_to_directory(self, lproject, ldirectory, lregex = '.*'):
         """
         Download all sessions from a project to a specific directory
 
@@ -346,6 +356,10 @@ class Xnat:
         ----------
         lproject : str
             Project ID
+        ldirectory : str
+            Directory where the files will be downloaded
+        lregex: str
+            A regex to match specifc experiment labels
 
         Returns
         -------
@@ -357,11 +371,12 @@ class Xnat:
         print("Using {} as download directory".format(download_dir))
         for subject in project.subjects.values():
             for experiment in subject.experiments.values():
-                print("Downloading ", experiment)
-                experiment.download_dir(download_dir)
+                if re.match(lregex, experiment.label):
+                    print("Downloading ", experiment)
+                    experiment.download_dir(download_dir)
         return download_dir
 
-    def get_project_sessions(self, lproject):
+    def get_project_sessions(self, lproject, lregex = '.*'):
         """
         Returns all the sessions from a project without the need to downlaod them locally
 
@@ -371,6 +386,8 @@ class Xnat:
         ----------
         lproject : str
             Project ID
+        lregex: str
+            A regex to match specifc experiment labels
 
         Returns
         -------
@@ -381,7 +398,8 @@ class Xnat:
         allexperiments = []
         for subject in project.subjects.values():
             for experiment in subject.experiments.values():
-                allexperiments.append(experiment)
+                if re.match(lregex, experiment.label):
+                    allexperiments.append(experiment)
         return allexperiments
 
     def convert_dicom_nifti(self, dicom_directory, output_folder):
